@@ -99,6 +99,11 @@ public class Cliente extends javax.swing.JFrame {
         });
 
         actualizar.setText("Actualizar");
+        actualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                actualizarActionPerformed(evt);
+            }
+        });
 
         eliminar.setText("Eliminar");
 
@@ -226,7 +231,7 @@ public class Cliente extends javax.swing.JFrame {
         
         try{
             cx = getConnection();
-            ps = cx.prepareStatement("select * from cliente where cedula = ?");
+            ps = cx.prepareStatement("SELECT * FROM cliente WHERE cedula = ?");
             ps.setString(1,cedula.getText());
             rs = ps.executeQuery();
             if(rs.next()){
@@ -260,7 +265,7 @@ public class Cliente extends javax.swing.JFrame {
         
         try{
             cx = getConnection();
-            ps = cx.prepareStatement("insert into cliente(CEDULA, NOMBRES, APELLIDOS, TELEFONO, DIRECCION) VALUES (?, ?, ?, ?, ?)");
+            ps = cx.prepareStatement("INSERT INTO cliente(CEDULA, NOMBRES, APELLIDOS, TELEFONO, DIRECCION) VALUES (?, ?, ?, ?, ?)");
             ps.setString(1,cedula.getText());
             ps.setString(2,nombre.getText());
             ps.setString(3,apellidos.getText());
@@ -279,6 +284,32 @@ public class Cliente extends javax.swing.JFrame {
         }
         limpiar();
     }//GEN-LAST:event_ingresarActionPerformed
+
+    private void actualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_actualizarActionPerformed
+        Connection cx = null;
+        
+        try{
+            cx = getConnection();
+            ps = cx.prepareStatement("UPDATE cliente SET CEDULA = ?, NOMBRES = ?, APELLIDOS = ?, TELEFONO = ?, DIRECCION = ? WHERE CEDULA = ?");
+            ps.setString(1,cedula.getText());
+            ps.setString(2,nombre.getText());
+            ps.setString(3,apellidos.getText());
+            ps.setString(4,telefono.getText());
+            ps.setString(5,direccion.getText());
+            ps.setString(6,cedula.getText());
+            int res = ps.executeUpdate();
+            
+            if (res > 0 ){
+                JOptionPane.showMessageDialog(null,"Se actualizaron los datos");
+            }else{
+                JOptionPane.showMessageDialog(null,"Error no se pudo Actualizar");
+            }
+            cx.close();
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        limpiar();
+    }//GEN-LAST:event_actualizarActionPerformed
 
     /**
      * @param args the command line arguments

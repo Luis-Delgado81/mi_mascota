@@ -3,12 +3,32 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package Formulario;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.*;
 
-/**
- *
- * @author Luis Eduardo
- */
+
 public class Cliente extends javax.swing.JFrame {
+
+    public static final String url = "jdbc:mysql://localhost:3306/mi_mascota"; 
+    public static final String user = "root";
+    public static final String password = "";
+    PreparedStatement ps;
+    ResultSet rs;
+
+    // Correct the connection method return type and update the driver class name
+    public static Connection getConnection() {
+        Connection cx = null;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            cx = DriverManager.getConnection(url, user, password);
+        } catch (Exception e) {
+            System.out.print(e);
+        }
+        return cx;
+    }
 
     private void limpiar(){
         cedula.setText("");
@@ -77,6 +97,11 @@ public class Cliente extends javax.swing.JFrame {
         });
 
         ingresar.setText("Ingresar");
+        ingresar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ingresarActionPerformed(evt);
+            }
+        });
 
         actualizar.setText("Actualizar");
 
@@ -216,6 +241,32 @@ public class Cliente extends javax.swing.JFrame {
     private void jLabel8MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel8MouseClicked
         limpiar();        // TODO add your handling code here:
     }//GEN-LAST:event_jLabel8MouseClicked
+
+    private void ingresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ingresarActionPerformed
+        
+        Connection cx = null;
+        
+        try{
+            cx = getConnection();
+            ps = cx.prepareStatement("insert into cliente(CEDULA, NOMBRES, APELLIDOS, TELEFONO, DIRECCION) VALUES (?, ?, ?, ?, ?)");
+            ps.setString(1,cedula.getText());
+            ps.setString(2,nombre.getText());
+            ps.setString(3,apellidos.getText());
+            ps.setString(4,telefono.getText());
+            ps.setString(5,direccion.getText());
+            int res = ps.executeUpdate();
+            
+            if (res > 0 ){
+                JOptionPane.showMessageDialog(null,"Registro Guardado");
+            }else{
+                JOptionPane.showMessageDialog(null,"Error al Guardar");
+            }
+            cx.close();
+        }catch (Exception e) {
+            System.out.println(e);
+        }
+        limpiar();
+    }//GEN-LAST:event_ingresarActionPerformed
 
     /**
      * @param args the command line arguments
